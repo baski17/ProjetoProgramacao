@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import pt.ipg.projetoprogramacao.ui.theme.ProjetoProgramacaoTheme
 
 class MainActivity : ComponentActivity() {
@@ -71,11 +73,13 @@ fun ObjectiveCalculatorLayout(modifier: Modifier = Modifier) {
     var showError by rememberSaveable { mutableStateOf(false) }
 
     val salary = salaryInput.toDoubleOrNull() ?: 0.0
+    val expenses = expensesInput.toDoubleOrNull() ?: 0.0
     val goal = goalInput.toDoubleOrNull() ?: 0.0
 
-
-
-
+    val monthlySavings = salary - expenses
+    val dailySavings = monthlySavings / 30 // Considering an average month length
+    val necessaryAmount = goal - monthlySavings
+    val daysToGoal = if (dailySavings > 0) goal / dailySavings else Double.POSITIVE_INFINITY
 
     Column(
         modifier = modifier
@@ -126,6 +130,30 @@ fun ObjectiveCalculatorLayout(modifier: Modifier = Modifier) {
             modifier = Modifier.padding(top = 16.dp)
         ) {
             Text("Calcular Valor")
+        }
+
+        if (showNecessaryAmount) {
+            Text(
+                text = "Dinheiro necessário: $necessaryAmount",
+                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(top = 16.dp)
+            )
+            if (daysToGoal.isFinite()) {
+                Text(
+                    text = "Tempo necessário: %.0f dias".format(daysToGoal),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            } else {
+                Text(
+                    text = "Tempo necessário: Impossível atingir o objetivo com as economias atuais",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
         }
     }
 }
