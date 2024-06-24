@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -66,6 +67,15 @@ fun ObjectiveCalculatorLayout(modifier: Modifier = Modifier) {
     var salaryInput by rememberSaveable { mutableStateOf("") }
     var expensesInput by rememberSaveable { mutableStateOf("") }
     var goalInput by rememberSaveable { mutableStateOf("") }
+    var showNecessaryAmount by rememberSaveable { mutableStateOf(false) }
+    var showError by rememberSaveable { mutableStateOf(false) }
+
+    val salary = salaryInput.toDoubleOrNull() ?: 0.0
+    val goal = goalInput.toDoubleOrNull() ?: 0.0
+
+
+
+
 
     Column(
         modifier = modifier
@@ -107,5 +117,15 @@ fun ObjectiveCalculatorLayout(modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
         )
+
+        Button(
+            onClick = {
+                showError = goal <= salary
+                showNecessaryAmount = !showError
+            },
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text("Calcular Valor")
+        }
     }
 }
