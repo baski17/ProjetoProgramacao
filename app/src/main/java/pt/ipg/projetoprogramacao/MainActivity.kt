@@ -6,7 +6,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -19,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -85,13 +88,16 @@ fun ObjectiveCalculatorLayout(modifier: Modifier = Modifier) {
         modifier = modifier
             .statusBarsPadding()
             .padding(horizontal = 16.dp)
-            .fillMaxSize(),
+            .verticalScroll(rememberScrollState())
+            .safeDrawingPadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text(
             text = "Cálculo do Objetivo",
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier
+                .padding(bottom = 16.dp)
+                .align(alignment = Alignment.Start)
         )
 
         EditNumberField(
@@ -154,6 +160,16 @@ fun ObjectiveCalculatorLayout(modifier: Modifier = Modifier) {
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }
+        }
+
+        if (showError) {
+            Text(
+                text = "O seu objetivo foi cumprido",
+                color = Color.Red,
+                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(top = 16.dp)
+            )
         }
     }
 }
