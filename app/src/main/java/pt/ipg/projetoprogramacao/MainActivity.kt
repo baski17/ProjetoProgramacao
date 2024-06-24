@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,7 +22,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -84,92 +88,108 @@ fun ObjectiveCalculatorLayout(modifier: Modifier = Modifier) {
     val necessaryAmount = goal - monthlySavings
     val daysToGoal = if (dailySavings > 0) goal / dailySavings else Double.POSITIVE_INFINITY
 
-    Column(
+    Box(
         modifier = modifier
+            .fillMaxSize()
             .statusBarsPadding()
-            .padding(horizontal = 16.dp)
-            .verticalScroll(rememberScrollState())
-            .safeDrawingPadding(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = "Cálculo do Objetivo",
-            modifier = Modifier
-                .padding(bottom = 16.dp)
-                .align(alignment = Alignment.Start)
+        Image(
+            painter = painterResource(id = R.drawable.money), // Replace with your image resource
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize().alpha(0.3f)
+
         )
 
-        EditNumberField(
-            labelText = "Salário",
-            value = salaryInput,
-            onValueChange = { newValue -> salaryInput = newValue },
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        )
-
-        EditNumberField(
-            labelText = "Despesas",
-            value = expensesInput,
-            onValueChange = { newValue -> expensesInput = newValue },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        )
-
-        EditNumberField(
-            labelText = "Valor Objetivo",
-            value = goalInput,
-            onValueChange = { newValue -> goalInput = newValue },
-            action = ImeAction.Done,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        )
-
-        Button(
-            onClick = {
-                showError = goal <= salary
-                showNecessaryAmount = !showError
-            },
-            modifier = Modifier.padding(top = 16.dp)
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+                .verticalScroll(rememberScrollState())
+                .safeDrawingPadding(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Text("Calcular Valor")
-        }
-
-        if (showNecessaryAmount) {
             Text(
-                text = "Dinheiro necessário: $necessaryAmount",
-                style = MaterialTheme.typography.bodyLarge,
-                fontSize = 20.sp,
-                modifier = Modifier.padding(top = 16.dp)
+                text = "Cálculo do Objetivo",
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .align(alignment = Alignment.Start),
+                    fontSize = 24.sp
+
             )
-            if (daysToGoal.isFinite()) {
+
+            EditNumberField(
+                labelText = "Salário",
+                value = salaryInput,
+                onValueChange = { newValue -> salaryInput = newValue },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
+
+            EditNumberField(
+                labelText = "Despesas",
+                value = expensesInput,
+                onValueChange = { newValue -> expensesInput = newValue },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
+
+            EditNumberField(
+                labelText = "Valor Objetivo",
+                value = goalInput,
+                onValueChange = { newValue -> goalInput = newValue },
+                action = ImeAction.Done,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
+
+            Button(
+                onClick = {
+                    showError = goal <= salary
+                    showNecessaryAmount = !showError
+                },
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
+                Text("Calcular Valor")
+            }
+
+            if (showNecessaryAmount) {
                 Text(
-                    text = "Tempo necessário: %.0f dias".format(daysToGoal),
+                    text = "Dinheiro necessário: $necessaryAmount",
                     style = MaterialTheme.typography.bodyLarge,
                     fontSize = 20.sp,
-                    modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier.padding(top = 16.dp)
                 )
-            } else {
+                if (daysToGoal.isFinite()) {
+                    Text(
+                        text = "Tempo necessário: %.0f dias".format(daysToGoal),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                } else {
+                    Text(
+                        text = "Tempo necessário: Impossível atingir o objetivo com as economias atuais",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+            }
+
+            if (showError) {
                 Text(
-                    text = "Tempo necessário: Impossível atingir o objetivo com as economias atuais",
+                    text = "O seu objetivo foi cumprido",
+                    color = Color.Red,
                     style = MaterialTheme.typography.bodyLarge,
                     fontSize = 20.sp,
-                    modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier.padding(top = 16.dp)
                 )
             }
-        }
-
-        if (showError) {
-            Text(
-                text = "O seu objetivo foi cumprido",
-                color = Color.Red,
-                style = MaterialTheme.typography.bodyLarge,
-                fontSize = 20.sp,
-                modifier = Modifier.padding(top = 16.dp)
-            )
         }
     }
 }
